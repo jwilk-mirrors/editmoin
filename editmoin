@@ -28,7 +28,7 @@ import shutil
 import md5
 import re
 
-USAGE = "Usage: editmoin <moin page URL>\n"
+USAGE = "Usage: editmoin [-t <template page>] <moin page URL>\n"
 
 # normal
 BODYRE = re.compile('<textarea.*?name="savetext".*?>(.*)</textarea>',

@@ -163,11 +163,12 @@ def get_message(data):
 
 def get_id(moinurl):
     idfilename = os.path.expanduser("~/.moin_ids")
-    file = open(idfilename)
-    for line in file.readlines():
-        url, id = line.split()
-        if moinurl.startswith(url):
-            return id
+    if os.path.isfile(idfilename):
+        file = open(idfilename)
+        for line in file.readlines():
+            url, id = line.split()
+            if moinurl.startswith(url):
+                return id
     return None
 
 def get_urlopener(moinurl, id=None):

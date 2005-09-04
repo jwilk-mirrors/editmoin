@@ -14,11 +14,11 @@ WARNING: This program expects information to be in a very specific
          no warranties of working at all. All I can say is that it
          worked for me, at least once. ;-)
 
-Tested moin versions: 0.9, 0.11, 1.0, 1.1
+Tested moin versions: 0.9, 0.11, 1.0, 1.1, 1.3.5
 """
 
 __author__ = "Gustavo Niemeyer <niemeyer@conectiva.com>"
-__version__ = "1.0"
+__version__ = "1.2"
 __license__ = "GPL"
 
 import tempfile
@@ -29,6 +29,8 @@ import md5
 import re
 
 USAGE = "Usage: editmoin [-t <template page>] <moin page URL>\n"
+
+IDFILENAME = os.path.expanduser("~/.moin_ids")
 
 # normal
 BODYRE = re.compile('<textarea.*?name="savetext".*?>(.*)</textarea>',
@@ -169,14 +171,36 @@ def get_message(data):
     return message 
 
 def get_id(moinurl):
-    idfilename = os.path.expanduser("~/.moin_ids")
-    if os.path.isfile(idfilename):
-        file = open(idfilename)
+    if os.path.isfile(IDFILENAME):
+        file = open(IDFILENAME)
         for line in file.readlines():
-            url, id = line.split()
+            tokens = line.split()
+            if len(tokens) > 1:
+                url, id = tokens[:2]
+            else:
+                url, id = tokens[0], None
             if moinurl.startswith(url):
                 return id
     return None
+
+def translate_shortcut(moinurl):
+    if "://" in moinurl:
+        return moinurl
+    if "/" in moinurl:
+        shortcut, pathinfo = moinurl.split("/", 1)
+    else:
+        shortcut, pathinfo = moinurl, ""
+    if os.path.isfile(IDFILENAME):
+        file = open(IDFILENAME)
+        for line in file.readlines():
+            url, id = line.split()
+            if shortcut in url:
+                if pathinfo:
+                    return "%s/%s" % (url, pathinfo)
+                else:
+                    return url
+    raise Error, "no suitable url found for shortcut '%s'" % shortcut
+
 
 def get_urlopener(moinurl, id=None):
     urlopener = urllib.URLopener()
@@ -257,7 +281,7 @@ def main():
     if len(argv) != 1:
         sys.stderr.write(USAGE)
         sys.exit(1)
-    url = argv[0]
+    url = translate_shortcut(argv[0])
     id = get_id(url)
     urlopener = get_urlopener(url, id)
     try:

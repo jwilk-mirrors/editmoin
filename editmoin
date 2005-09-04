@@ -35,8 +35,9 @@ BODYRE = re.compile('<textarea.*?name="savetext".*?>(.*)</textarea>',
                     re.M|re.DOTALL)
 DATESTAMPRE = re.compile('<input.*?name="datestamp".*?value="(.*?)".*?>')
 NOTIFYRE = re.compile('<input.*?name="notify".*?value="(.*?)".*?>')
-MESSAGERE = re.compile('<div class="message">(.*?)</div>', re.M|re.DOTALL)
-OLDMESSAGERE = re.compile('^</table>(.*?)<a.*?>Clear message</a>', re.M|re.DOTALL)
+MESSAGERE1 = re.compile('^</table>(.*?)<a.*?>Clear message</a>', re.M|re.DOTALL)
+MESSAGERE2 = re.compile('<div class="message">(.*?)</div>', re.M|re.DOTALL)
+MESSAGERE3 = re.compile('<div id="message">\s*<p>(.*?)</p>', re.M|re.DOTALL)
 
 CANCELRE = re.compile('<input type="submit" name="button_cancel" value="(.*?)">')
 
@@ -55,7 +56,10 @@ class MoinFile:
         self.id = id
         self.data = open(filename).read()
         self.body = self._get_data(BODYRE, "body")
-        self.datestamp = self._get_data(DATESTAMPRE, "datestamp")
+        try:
+            self.datestamp = self._get_data(DATESTAMPRE, "datestamp")
+        except Error:
+            self.datestamp = None
         try:
             self.notify = self._get_data(NOTIFYRE, "notify")
             self.comment = "None"
@@ -147,10 +151,13 @@ class MoinFile:
  
 def get_message(data):
     message = None
-    match = MESSAGERE.search(data)
+    match = MESSAGERE3.search(data)
+    if not match:
+        # Check for moin < 1.3.5 (not sure the precise version it changed).
+        match = MESSAGERE2.search(data)
     if not match:
         # Check for moin <= 0.9.
-        match = OLDMESSAGERE.search(data)
+        match = MESSAGERE1.search(data)
     if match:
         message = match.group(1)
         message = re.subn("\n", " ", message)[0]
@@ -185,6 +192,7 @@ def fetchfile(urlopener, url, id, template):
     if template:
         geturl += "&template=" + urllib.quote(template)
     filename, headers = urlopener.retrieve(geturl)
+    os.system("cp -f %s /tmp/moinfile" % filename)
     return MoinFile(filename, id)
 
 def editfile(moinfile):
@@ -207,8 +215,10 @@ def sendfile(urlopener, url, moinfile):
             comment += urllib.quote(moinfile.comment)
     else:
         comment = ""
-    data = "action=savepage&button_save=1&datestamp=%s&savetext=%s%s" \
-           % (moinfile.datestamp, urllib.quote(moinfile.body), comment)
+    data = "action=savepage&button_save=1&savetext=%s%s" \
+           % (urllib.quote(moinfile.body), comment)
+    if moinfile.datestamp:
+        data += "&datestamp=%s" % moinfile.datestamp
     if moinfile.notify == "Yes":
         data += "&notify=1"
     if moinfile.add_category and moinfile.add_category != "None":
@@ -226,7 +236,9 @@ def sendfile(urlopener, url, moinfile):
 def sendcancel(urlopener, url, moinfile):
     if not moinfile.has_cancel():
         return
-    data = "action=savepage&button_cancel=1&datestamp=%s" % moinfile.datestamp
+    data = "action=savepage&button_cancel=1"
+    if moinfile.datestamp:
+        data += "&datestamp=%s" % moinfile.datestamp
     url = urlopener.open(url, data)
     answer = url.read()
     url.close()

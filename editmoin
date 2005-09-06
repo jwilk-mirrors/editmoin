@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """
 Copyright (c) 2002-2003  Gustavo Niemeyer <niemeyer@conectiva.com>
 
@@ -193,12 +193,14 @@ def translate_shortcut(moinurl):
     if os.path.isfile(IDFILENAME):
         file = open(IDFILENAME)
         for line in file.readlines():
-            url, id = line.split()
-            if shortcut in url:
-                if pathinfo:
-                    return "%s/%s" % (url, pathinfo)
-                else:
-                    return url
+            line = line.strip()
+            if line and not line[0] == "#":
+                url = line.split()[0]
+                if shortcut in url:
+                    if pathinfo:
+                        return "%s/%s" % (url, pathinfo)
+                    else:
+                        return url
     raise Error, "no suitable url found for shortcut '%s'" % shortcut
 
 
@@ -278,13 +280,13 @@ def main():
     if len(argv) > 2 and argv[0] == "-t":
         template = argv[1]
         argv = argv[2:]
-    if len(argv) != 1:
+    if len(argv) != 1 or argv[0] in ("-h", "--help"):
         sys.stderr.write(USAGE)
         sys.exit(1)
-    url = translate_shortcut(argv[0])
-    id = get_id(url)
-    urlopener = get_urlopener(url, id)
     try:
+        url = translate_shortcut(argv[0])
+        id = get_id(url)
+        urlopener = get_urlopener(url, id)
         moinfile = fetchfile(urlopener, url, id, template)
         try:
             if editfile(moinfile):

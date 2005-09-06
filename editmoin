@@ -174,13 +174,15 @@ def get_id(moinurl):
     if os.path.isfile(IDFILENAME):
         file = open(IDFILENAME)
         for line in file.readlines():
-            tokens = line.split()
-            if len(tokens) > 1:
-                url, id = tokens[:2]
-            else:
-                url, id = tokens[0], None
-            if moinurl.startswith(url):
-                return id
+            line = line.strip()
+            if line and line[0] != "#":
+                tokens = line.split()
+                if len(tokens) > 1:
+                    url, id = tokens[:2]
+                else:
+                    url, id = tokens[0], None
+                if moinurl.startswith(url):
+                    return id
     return None
 
 def translate_shortcut(moinurl):
@@ -194,7 +196,7 @@ def translate_shortcut(moinurl):
         file = open(IDFILENAME)
         for line in file.readlines():
             line = line.strip()
-            if line and not line[0] == "#":
+            if line and line[0] != "#":
                 url = line.split()[0]
                 if shortcut in url:
                     if pathinfo:

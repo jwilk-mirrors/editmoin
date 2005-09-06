@@ -2,7 +2,7 @@
 from distutils.core import setup
 
 setup(name="editmoin",
-      version = "1.0",
+      version = "1.2",
       description = "Edit Moin pages remotely with your preferred editor",
       author = "Gustavo Niemeyer",
       author_email = "niemeyer@conectiva.com",

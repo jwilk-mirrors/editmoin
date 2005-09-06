@@ -37,6 +37,7 @@ BODYRE = re.compile('<textarea.*?name="savetext".*?>(.*)</textarea>',
                     re.M|re.DOTALL)
 DATESTAMPRE = re.compile('<input.*?name="datestamp".*?value="(.*?)".*?>')
 NOTIFYRE = re.compile('<input.*?name="notify".*?value="(.*?)".*?>')
+COMMENTRE = re.compile('<input.*?name="comment".*>')
 MESSAGERE1 = re.compile('^</table>(.*?)<a.*?>Clear message</a>', re.M|re.DOTALL)
 MESSAGERE2 = re.compile('<div class="message">(.*?)</div>', re.M|re.DOTALL)
 MESSAGERE3 = re.compile('<div id="message">\s*<p>(.*?)</p>', re.M|re.DOTALL)
@@ -67,7 +68,10 @@ class MoinFile:
             self.comment = "None"
         except Error:
             self.notify = None
-            self.comment = None
+            if COMMENTRE.search(self.data):
+                self.comment = "None"
+            else:
+                self.comment = None
         try:
             self.categories = self._get_data_findall(CATEGORYRE, "category")
         except Error:
@@ -112,8 +116,9 @@ class MoinFile:
             file.write("@@ WARNING! You're NOT logged in!\n")
         else:
             file.write("@@ Using ID %s.\n" % self.id)
-        if self.notify is not None:
+        if self.comment is not None:
             file.write("@@ Comment: %s\n" % self.comment)
+        if self.notify is not None:
             yes, no = (self.notify and ("x", " ") or (" ", "x"))
             file.write("@@ Notify: (%s) Yes  (%s) No\n" % (yes, no))
         if self.categories:

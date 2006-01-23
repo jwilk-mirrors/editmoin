@@ -2,7 +2,7 @@
 " Filename:    moin.vim
 " Language:    MoinMoin structured text
 " Maintainer:  Gustavo Niemeyer <niemeyer@conectiva.com>
-" Last Change: Mon, 09 Jun 2003 18:17:14 -0300
+" Last Change: Thu, 20 Oct 2005 15:54:37 -0200
 
 " remove any old syntax stuff hanging around
 if version < 600
@@ -27,7 +27,7 @@ syn match   moinComment     "^##.*$"
 syn region  moinMacro       start="\[\[" end="\]\]"
 syn region  moinHeader      start="^\z(=\{1,5}\) " end=" \z1$" oneline
 syn match   moinRule        "^-\{4,}$"
-syn match   moinSmileys     "\(\s\|\_^\)\(%)\|(!)\|(./)\|/!\\\|:(\|:)\|:))\|:-?\|:D\|:\\\|:o\|;)\|;))\|<!>\|<:(\|>:>\|@)\|B)\|X-(\|{1}\|{2}\|{3}\|{OK}\|{X}\|{da}\|{de}\|{en}\|{es}\|{fi}\|{fr}\|{it}\|{i}\|{ja}\|{ko}\|{nl}\|{pt}\|{sv}\|{us}\|{zh}\||)\)\(\s\|\_$\)"
+syn match   moinSmileys     "\(\s\|\_^\)\(%)\|(!)\|(./)\|/!\\\|:(\|:)\|:))\|:-(\|:-)\|:-))\|:-?\|:D\|:\\\|:o\|;)\|;-)\|<!>\|<:(\|>:>\|B)\|B-)\|X-(\|{\*}\|{1}\|{2}\|{3}\|{OK}\|{X}\|{da}\|{de}\|{en}\|{es}\|{fi}\|{fr}\|{it}\|{i}\|{ja}\|{ko}\|{nl}\|{o}\|{pt}\|{sv}\|{us}\|{zh}\||)\||-)\)\(\s\|\_$\)"
 syn match   moinLinkMoin    "\(/\?[[:upper:]][[:lower:][:digit:]]\+\)\{2,}"
 syn match   moinLinkEmail   "<\?[[:alnum:]-._+]\+@[[:alnum:]-]\+\.[[:alnum:]-.]\+>\?"
 syn match   moinLinkUrl     "\(http\|https\|ftp\|nntp\|news\|mailto\|telnet\|wiki\|file\|attachment\|inline\|drawing\):\([^][:space:]<"'}|:,.)?!]\|[]"'}|:,.)?!][^][:space:]<"'}|:,.)?!]\)\+"

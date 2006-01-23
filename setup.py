@@ -1,16 +1,28 @@
 #!/usr/bin/python
 from distutils.core import setup
+import os
+import re
+
+if os.path.isfile("MANIFEST"):
+    os.unlink("MANIFEST")
+
+verpat = re.compile("__version__ *= *\"(.*)\"")
+data = open("editmoin").read()
+m = verpat.search(data)
+if not m:
+    sys.exit("error: can't find __version__")
+VERSION = m.group(1)
 
 setup(name="editmoin",
-      version = "1.3",
+      version = VERSION,
       description = "Edit Moin pages remotely with your preferred editor",
       author = "Gustavo Niemeyer",
-      author_email = "niemeyer@conectiva.com",
-      url = "https://moin.conectiva.com.br/EditMoin",
+      author_email = "gustavo@niemeyer.net",
+      url = "http://labix.org/editmoin",
       license = "GPL",
       long_description = 
 """\
-This program allows you to edit moin (see http://moin.sourceforge.net)
+This program allows you to edit moin (see http://moinmoin.wikiwikiweb.de)
 pages with your preferred editor. It means you can easily edit your
 pages, without the usual limitations of most web browsers' text areas.
 """,

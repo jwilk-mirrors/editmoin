@@ -250,7 +250,6 @@ def fetchfile(urlopener, url, id, template):
     if template:
         geturl += "&template=" + urllib.quote(template)
     filename, headers = urlopener.retrieve(geturl)
-    os.system("cp -f %s /tmp/moinfile" % filename)
     return MoinFile(filename, id)
 
 def editfile(moinfile):

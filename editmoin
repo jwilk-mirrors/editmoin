@@ -14,11 +14,11 @@ WARNING: This program expects information to be in a very specific
          no warranties of working at all. All I can say is that it
          worked for me, at least once. ;-)
 
-Tested moin versions: 0.9, 0.11, 1.0, 1.1, 1.3.5, 1.5, 1.5.1
+Tested moin versions: 0.9, 0.11, 1.0, 1.1, 1.3.5, 1.5, 1.5.1, 1.5.4, 1.5.5
 """
 
 __author__ = "Gustavo Niemeyer <gustavo@niemeyer.net>"
-__version__ = "1.5"
+__version__ = "1.6"
 __license__ = "GPL"
 
 import tempfile
@@ -29,35 +29,36 @@ import shutil
 import md5
 import re
 
+
 USAGE = "Usage: editmoin [-t <template page>] <moin page URL>\n"
 
 IDFILENAME = os.path.expanduser("~/.moin_ids")
 
-# normal
+
 BODYRE = re.compile('<textarea.*?name="savetext".*?>(.*)</textarea>',
                     re.M|re.DOTALL)
 DATESTAMPRE = re.compile('<input.*?name="datestamp".*?value="(.*?)".*?>')
 NOTIFYRE = re.compile('<input.*?name="notify".*?value="(.*?)".*?>')
 COMMENTRE = re.compile('<input.*?name="comment".*>')
-MESSAGERE1 = re.compile('^</table>(.*?)<a.*?>Clear message</a>', re.M|re.DOTALL)
+MESSAGERE1 = re.compile('^</table>(.*?)<a.*?>Clear message</a>',
+                        re.M|re.DOTALL)
 MESSAGERE2 = re.compile('<div class="message">(.*?)</div>', re.M|re.DOTALL)
 MESSAGERE3 = re.compile('<div id="message">\s*<p>(.*?)</p>', re.M|re.DOTALL)
-
 STATUSRE = re.compile('<p class="status">(.*?)</p>', re.M|re.DOTALL)
-
 CANCELRE = re.compile('<input.*?type="submit" name="button_cancel" value="(.*?)">')
-
 EDITORRE = re.compile('<input.*?type="hidden" name="editor" value="text">')
-
-# findall
+TICKETRE = re.compile('<input.*?type="hidden" name="ticket" value="(.*?)">')
+REVRE = re.compile('<input.*?type="hidden" name="rev" value="(.*?)">')
 CATEGORYRE = re.compile('<option value="(Category\w+?)">')
-
-# other
 SELECTIONRE = re.compile("\(([^)]*)\)\s*([^(]*)")
-
 EXTENDMSG = "Use the Preview button to extend the locking period."
 
+
+marker = object()
+
+
 class Error(Exception): pass
+
 
 class MoinFile:
     multi_selection = ["notify", "add_category"]
@@ -66,10 +67,12 @@ class MoinFile:
         self.id = id
         self.data = open(filename).read()
         self.body = self._get_data(BODYRE, "body")
+
         try:
             self.datestamp = self._get_data(DATESTAMPRE, "datestamp")
         except Error:
             self.datestamp = None
+
         try:
             self.notify = self._get_data(NOTIFYRE, "notify")
             self.comment = "None"
@@ -79,10 +82,8 @@ class MoinFile:
                 self.comment = "None"
             else:
                 self.comment = None
-        try:
-            self.categories = self._get_data_findall(CATEGORYRE, "category")
-        except Error:
-            self.categories = []
+
+        self.categories = self._get_data_findall(CATEGORYRE, "category", [])
         self.add_category = None
 
         match = STATUSRE.search(self.data)
@@ -91,9 +92,14 @@ class MoinFile:
         else:
             self.status = None
 
-    def _get_data(self, pattern, info):
+        self.rev = self._get_data(REVRE, "rev", None)
+        self.ticket = self._get_data(TICKETRE, "ticket", None)
+
+    def _get_data(self, pattern, info, default=marker):
         match = pattern.search(self.data)
         if not match:
+            if default is not marker:
+                return default
             message = get_message(self.data)
             if message:
                 print message
@@ -101,9 +107,11 @@ class MoinFile:
         else:
             return match.group(1)
 
-    def _get_data_findall(self, pattern, info):
+    def _get_data_findall(self, pattern, info, default=marker):
         groups = pattern.findall(self.data)
         if not groups:
+            if default is not marker:
+                return default
             raise Error, info+" information not found"
         return groups
 
@@ -279,11 +287,15 @@ def sendfile(urlopener, url, moinfile):
     else:
         data += "&action=savepage"  # Moin < 1.5
     if moinfile.datestamp:
-        data += "&datestamp=%s" % moinfile.datestamp
+        data += "&datestamp=" + moinfile.datestamp
+    if moinfile.rev:
+        data += "&rev=" + moinfile.rev
+    if moinfile.ticket:
+        data += "&ticket=" + moinfile.ticket
     if moinfile.notify == "Yes":
         data += "&notify=1"
     if moinfile.add_category and moinfile.add_category != "None":
-        data += "&category=%s" % urllib.quote(moinfile.add_category)
+        data += "&category=" + urllib.quote(moinfile.add_category)
     url = urlopener.open(url, data)
     answer = url.read()
     url.close()
@@ -303,7 +315,11 @@ def sendcancel(urlopener, url, moinfile):
     else:
         data += "&action=savepage"             # Moin < 1.5
     if moinfile.datestamp:
-        data += "&datestamp=%s" % moinfile.datestamp
+        data += "&datestamp=" + moinfile.datestamp
+    if moinfile.rev:
+        data += "&rev=" + moinfile.rev
+    if moinfile.ticket:
+        data += "&ticket=" + moinfile.ticket
     url = urlopener.open(url, data)
     answer = url.read()
     url.close()

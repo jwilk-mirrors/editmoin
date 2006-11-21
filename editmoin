@@ -33,6 +33,7 @@ import re
 USAGE = "Usage: editmoin [-t <template page>] <moin page URL>\n"
 
 IDFILENAME = os.path.expanduser("~/.moin_ids")
+ALIASFILENAME = os.path.expanduser("~/.moin_aliases")
 
 
 BODYRE = re.compile('<textarea.*?name="savetext".*?>(.*)</textarea>',
@@ -230,17 +231,38 @@ def translate_shortcut(moinurl):
         shortcut, pathinfo = moinurl.split("/", 1)
     else:
         shortcut, pathinfo = moinurl, ""
+    if os.path.isfile(ALIASFILENAME):
+        file = open(ALIASFILENAME)
+        try:
+            for line in file.readlines():
+                line = line.strip()
+                if line and line[0] != "#":
+                    alias, value = line.split(None, 1)
+                    if pathinfo:
+                        value = "%s/%s" % (value, pathinfo)
+                    if shortcut == alias:
+                        if "://" in value:
+                            return value
+                        if "/" in value:
+                            shortcut, pathinfo = value.split("/", 1)
+                        else:
+                            shortcut, pathinfo = value, ""
+        finally:
+            file.close()
     if os.path.isfile(IDFILENAME):
         file = open(IDFILENAME)
-        for line in file.readlines():
-            line = line.strip()
-            if line and line[0] != "#":
-                url = line.split()[0]
-                if shortcut in url:
-                    if pathinfo:
-                        return "%s/%s" % (url, pathinfo)
-                    else:
-                        return url
+        try:
+            for line in file.readlines():
+                line = line.strip()
+                if line and line[0] != "#":
+                    url = line.split()[0]
+                    if shortcut in url:
+                        if pathinfo:
+                            return "%s/%s" % (url, pathinfo)
+                        else:
+                            return url
+        finally:
+            file.close()
     raise Error, "no suitable url found for shortcut '%s'" % shortcut
 
 
@@ -250,7 +272,10 @@ def get_urlopener(moinurl, id=None):
     if proxy:
         urlopener.proxies.update({"http": proxy})
     if id:
+        # moinmoin < 1.6
         urlopener.addheader("Cookie", "MOIN_ID=\"%s\"" % id)
+        # moinmoin >= 1.6
+        urlopener.addheader("Cookie", "MOIN_SESSION=\"%s\"" % id)
     return urlopener
 
 def fetchfile(urlopener, url, id, template):

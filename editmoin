@@ -41,6 +41,7 @@ BODYRE = re.compile('<textarea.*?name="savetext".*?>(.*)</textarea>',
 DATESTAMPRE = re.compile('<input.*?name="datestamp".*?value="(.*?)".*?>')
 NOTIFYRE = re.compile('<input.*?name="notify".*?value="(.*?)".*?>')
 COMMENTRE = re.compile('<input.*?name="comment".*>')
+TRIVIALRE = re.compile('<input.*?name="trivial".*?value="(.*?)".*?>')
 MESSAGERE1 = re.compile('^</table>(.*?)<a.*?>Clear message</a>',
                         re.M|re.DOTALL)
 MESSAGERE2 = re.compile('<div class="message">(.*?)</div>', re.M|re.DOTALL)
@@ -62,7 +63,9 @@ class Error(Exception): pass
 
 
 class MoinFile:
-    multi_selection = ["notify", "add_category"]
+
+    multi_selection = ["notify", "trivial", "add_category"]
+
     def __init__(self, filename, id):
         self.filename = filename
         self.id = id
@@ -83,6 +86,11 @@ class MoinFile:
                 self.comment = "None"
             else:
                 self.comment = None
+
+        try:
+            self.trivial = self._get_data(TRIVIALRE, "trivial")
+        except Error:
+            self.trivial = None
 
         self.categories = self._get_data_findall(CATEGORYRE, "category", [])
         self.add_category = None
@@ -150,6 +158,8 @@ class MoinFile:
                 file.write(line+"\n")
         if self.comment is not None:
             file.write("@@ Comment: %s\n" % self.comment)
+        if self.trivial is not None:
+            file.write("@@ Trivial: ( ) Yes  (x) No\n")
         if self.notify is not None:
             yes, no = (self.notify and ("x", " ") or (" ", "x"))
             file.write("@@ Notify: (%s) Yes  (%s) No\n" % (yes, no))
@@ -319,6 +329,8 @@ def sendfile(urlopener, url, moinfile):
         data += "&ticket=" + moinfile.ticket
     if moinfile.notify == "Yes":
         data += "&notify=1"
+    if moinfile.trivial == "Yes":
+        data += "&trivial=1"
     if moinfile.add_category and moinfile.add_category != "None":
         data += "&category=" + urllib.quote(moinfile.add_category)
     url = urlopener.open(url, data)

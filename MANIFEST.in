@@ -1,1 +1,1 @@
-include MANIFEST.in editmoin moin.vim
+include MANIFEST.in editmoin moin.vim COPYING

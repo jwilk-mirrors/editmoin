@@ -145,6 +145,7 @@ class MoinFile:
     def write_raw(self):
         filename = tempfile.mktemp(".moin")
         file = open(filename, "w")
+        file.write("@@ vim:ft=moin\n")
         if not self.id:
             file.write("@@ WARNING! You're NOT logged in!\n")
         else:

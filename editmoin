@@ -278,7 +278,7 @@ def translate_shortcut(moinurl):
 
 
 def get_urlopener(moinurl, id=None):
-    urlopener = urllib.URLopener()
+    urlopener = urllib.FancyURLopener()
     proxy = os.environ.get("http_proxy")
     if proxy:
         urlopener.proxies.update({"http": proxy})

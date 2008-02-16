@@ -1,0 +1,13 @@
+editmoin (1.9.1-1) unstable; urgency=low
+
+  * Initial release to Debian. (Closes: #452946)
+  * debian/patches/01_vim-modeline.patch: Add a vim modeline to automatically
+    enable the moin.vim syntax file.
+  * debian/patches/02_http_auth.patch:
+    - Replace URLopener with FancyURLopener to make HTTP authentication
+      actually work. Thanks to Soren Hansen for the patch.
+  * Add editmoin.README.debian: Upstream tarball does not come with any
+    documentation, take the http://labix.org/editmoin Moin source and mangle
+    it a bit for readability.
+
+ -- Martin Pitt <mpitt@debian.org>  Sun, 30 Dec 2007 12:40:06 +0100

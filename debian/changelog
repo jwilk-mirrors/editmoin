@@ -1,4 +1,4 @@
-editmoin (1.9.1-2) UNRELEASED; urgency=low
+editmoin (1.9.1-2) unstable; urgency=low
 
   * Import package into bzr, branching from upstream trunk
     (https://code.launchpad.net/~niemeyer/editmoin/trunk). Drop debian/patches

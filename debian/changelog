@@ -10,8 +10,10 @@ editmoin (1.9.1-2) UNRELEASED; urgency=low
   * Remove debian/editmoin.README.debian, superseded by manpage.
   * editmoin: Use subprocess instead of os.system() to run the editor, to
     avoid issues with weird $EDITOR values.
+  * editmoin: Fix crash when the first line starting with "@ " comes before
+    the first line starting with "@@". (LP: #190081)
 
- -- Martin Pitt <mpitt@debian.org>  Sat, 16 Feb 2008 20:25:11 +0100
+ -- Martin Pitt <mpitt@debian.org>  Sat, 16 Feb 2008 20:50:45 +0100
 
 editmoin (1.9.1-1) unstable; urgency=low
 

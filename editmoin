@@ -185,6 +185,8 @@ class MoinFile:
             elif data[1] == "@":
                 lines.append(data[2:].strip())
             else:
+                if not lines:
+                    lines.append('')
                 lines[-1] += " "
                 lines[-1] += data[2:].strip()
             data = file.readline()

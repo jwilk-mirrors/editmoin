@@ -1,3 +1,12 @@
+editmoin (1.9.1-2) UNRELEASED; urgency=low
+
+  * Import package into bzr, branching from upstream trunk
+    (https://code.launchpad.net/~niemeyer/editmoin/trunk). Drop debian/patches
+    and apply them inline, since that's much more convenient for merging.
+    Add Vcs-Bzr: to debian/control.
+
+ -- Martin Pitt <mpitt@debian.org>  Sat, 16 Feb 2008 19:39:33 +0100
+
 editmoin (1.9.1-1) unstable; urgency=low
 
   * Initial release to Debian. (Closes: #452946)

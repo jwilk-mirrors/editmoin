@@ -6,6 +6,7 @@ Build-Depends-Indep: python (>= 2.3.5-7)
 Maintainer: Martin Pitt <mpitt@debian.org>
 Homepage: http://labix.org/editmoin
 Standards-Version: 3.7.3
+Vcs-Bzr: http://code.launchpad.net/~pitti/editmoin/debian
 XS-Python-Version: current
 
 Package: editmoin

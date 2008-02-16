@@ -15,8 +15,8 @@ Depends: ${python:Depends}
 XB-Python-Version: ${python:Versions}
 Description: edit MoinMoin wiki pages with your favourite editor
  editmoin allows you to edit pages in MoinMoin wikis with your
- preferred editor instead of the (usually quite limitated) web
- browsers' text areas.
+ preferred editor instead of the (usually quite limited) web
+ browser text areas.
  .
  It also supports configuration files to define shortcuts for URLs
  that you edit often.

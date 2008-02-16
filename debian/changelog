@@ -4,8 +4,9 @@ editmoin (1.9.1-2) UNRELEASED; urgency=low
     (https://code.launchpad.net/~niemeyer/editmoin/trunk). Drop debian/patches
     and apply them inline, since that's much more convenient for merging.
     Add Vcs-Bzr: to debian/control.
+  * debian/control: Fix typo in description. (Closes: #459549)
 
- -- Martin Pitt <mpitt@debian.org>  Sat, 16 Feb 2008 19:39:33 +0100
+ -- Martin Pitt <mpitt@debian.org>  Sat, 16 Feb 2008 19:45:56 +0100
 
 editmoin (1.9.1-1) unstable; urgency=low
 

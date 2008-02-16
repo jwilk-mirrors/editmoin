@@ -7,8 +7,9 @@ editmoin (1.9.1-2) UNRELEASED; urgency=low
   * debian/control: Fix typo in description. (Closes: #459549)
   * Add editmoin.1: manpage, based on former README. Install it in setup.py.
     (Closes: #453682)
+  * Remove debian/editmoin.README.debian, superseded by manpage.
 
- -- Martin Pitt <mpitt@debian.org>  Sat, 16 Feb 2008 20:13:46 +0100
+ -- Martin Pitt <mpitt@debian.org>  Sat, 16 Feb 2008 20:15:15 +0100
 
 editmoin (1.9.1-1) unstable; urgency=low
 

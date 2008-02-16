@@ -8,8 +8,10 @@ editmoin (1.9.1-2) UNRELEASED; urgency=low
   * Add editmoin.1: manpage, based on former README. Install it in setup.py.
     (Closes: #453682)
   * Remove debian/editmoin.README.debian, superseded by manpage.
+  * editmoin: Use subprocess instead of os.system() to run the editor, to
+    avoid issues with weird $EDITOR values.
 
- -- Martin Pitt <mpitt@debian.org>  Sat, 16 Feb 2008 20:15:15 +0100
+ -- Martin Pitt <mpitt@debian.org>  Sat, 16 Feb 2008 20:25:11 +0100
 
 editmoin (1.9.1-1) unstable; urgency=low
 

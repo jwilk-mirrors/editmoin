@@ -1,0 +1,30 @@
+editmoin (1.9.1-2) unstable; urgency=low
+
+  * Import package into bzr, branching from upstream trunk
+    (https://code.launchpad.net/~niemeyer/editmoin/trunk). Drop debian/patches
+    and apply them inline, since that's much more convenient for merging.
+    Add Vcs-Bzr: to debian/control.
+  * debian/control: Fix typo in description. (Closes: #459549)
+  * Add editmoin.1: manpage, based on former README. Install it in setup.py.
+    (Closes: #453682)
+  * Remove debian/editmoin.README.debian, superseded by manpage.
+  * editmoin: Use subprocess instead of os.system() to run the editor, to
+    avoid issues with weird $EDITOR values.
+  * editmoin: Fix crash when the first line starting with "@ " comes before
+    the first line starting with "@@". (LP: #190081)
+
+ -- Martin Pitt <mpitt@debian.org>  Sat, 16 Feb 2008 20:50:45 +0100
+
+editmoin (1.9.1-1) unstable; urgency=low
+
+  * Initial release to Debian. (Closes: #452946)
+  * debian/patches/01_vim-modeline.patch: Add a vim modeline to automatically
+    enable the moin.vim syntax file.
+  * debian/patches/02_http_auth.patch:
+    - Replace URLopener with FancyURLopener to make HTTP authentication
+      actually work. Thanks to Soren Hansen for the patch.
+  * Add editmoin.README.debian: Upstream tarball does not come with any
+    documentation, take the http://labix.org/editmoin Moin source and mangle
+    it a bit for readability.
+
+ -- Martin Pitt <mpitt@debian.org>  Sun, 30 Dec 2007 12:40:06 +0100

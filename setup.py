@@ -27,4 +27,5 @@ pages with your preferred editor. It means you can easily edit your
 pages, without the usual limitations of most web browsers' text areas.
 """,
       scripts = ["editmoin"],
+      data_files = [('share/man/man1', ['editmoin.1'])],
       )

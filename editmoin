@@ -67,9 +67,10 @@ class MoinFile:
 
     multi_selection = ["notify", "trivial", "add_category"]
 
-    def __init__(self, filename, id):
+    def __init__(self, filename, id, has_moin_session):
         self.filename = filename
         self.id = id
+        self.has_moin_session = has_moin_session
         self.data = open(filename).read()
         self.body = self._get_data(BODYRE, "body")
 
@@ -146,10 +147,13 @@ class MoinFile:
     def write_raw(self):
         filename = tempfile.mktemp(".moin")
         file = open(filename, "w")
+        if self.has_moin_session:
+            syntax_version = "1.6"
+        else:
+            syntax_version = "1.5"
+        file.write("@@ Syntax: %s\n" % syntax_version)
         if not self.id:
             file.write("@@ WARNING! You're NOT logged in!\n")
-        else:
-            file.write("@@ Using ID %s.\n" % self.id)
         if self.status is not None:
             text = self.status.replace(EXTENDMSG, "").strip()
             lines = textwrap.wrap(text, 70,
@@ -296,7 +300,8 @@ def fetchfile(urlopener, url, id, template):
     if template:
         geturl += "&template=" + urllib.quote(template)
     filename, headers = urlopener.retrieve(geturl)
-    return MoinFile(filename, id)
+    has_moin_session = "MOIN_SESSION" in headers.get("set-cookie", "")
+    return MoinFile(filename, id, has_moin_session)
 
 def editfile(moinfile):
     edited = 0

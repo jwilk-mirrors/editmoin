@@ -6,10 +6,10 @@ editmoin \- Edit MoinMoin wiki pages in your favourite editor
 .SH SYNOPSIS
 
 .B editmoin 
-http://moinmoin.wikiwikiweb.de/TestPage
+http://moinmo.in/WikiSandBox
 
 .B editmoin 
--t SomeTemplate http://moinmoin.wikiwikiweb.de/TestPage
+-t SomeTemplate http://moinmo.in/WikiSandBox
 
 .SH DESCRIPTION
 
@@ -22,14 +22,14 @@ Its usage is simple and straightforward. Just provide moin's web page
 url as the first parameter. For example:
 
 .IP
-editmoin http://moinmoin.wikiwikiweb.de/TestPage
+editmoin http://moinmo.in/WikiSandBox
 
 .PP
 You can also use the -t parameter, to inform a template
 to base this page on. For example:
 
 .IP
-editmoin -t SomeTemplate http://moinmoin.wikiwikiweb.de/TestPage
+editmoin -t SomeTemplate http://moinmo.in/WikiSandBox
 
 .SH CHANGE SETTINGS
 
@@ -47,22 +47,53 @@ The default editor is vi. If you want to use any other, just set the
 .B EDITOR 
 environment variable accordingly.
 
-.SH SETTING YOUR MOIN ID
+.SH SETTING YOUR USERNAME
+
+For editmoin to be able to authenticate you against the moin site you're
+accessing, it must know your username.  For that, you must edit the file
+.B ~/.moin_users
+and insert
+.B URL ID
+pairs on it. For example:
+
+.IP
+http://moinmo.in YourUserName
+.IP
+http://wiki.ubuntu.com
+.IP
+http://example.com/moin/moin.cgi AnotherUserName
+
+.PP
+If the server needs Basic HTTP Authentication you can use something like:
+
+.IP
+https://user:password@example.com/moin/moin.cgi YourUserName
+
+.PP
+For using shortcuts (see below), and also for better control, defining
+URLs without IDs in that file is valid.
+
+
+.SH SETTING YOUR MOIN ID EXPLICITLY
 
 In remote times, authentication was done in moin using an ID, consisting
 mostly of numbers.  Nowadays moin was improved to work with a more
-traditional username/password scheme.  Even then, these IDs may still
+traditional username/password scheme.  Even then, if the traditional
+username scheme mentioned above doesn't work for you, IDs may still
 be obtained after authentication, when the moin site sends your browser
-a MOIN_ID cookie.
+a MOIN_ID or MOIN_SESSION cookie.
 
-Unless you tell editmoin your moin IDs, you'll be editing pages
-anonymously.  Setting moin IDs consists of changing a file named
+Setting moin IDs consists of changing a file named
 .B ~/.moin_ids 
-and inserting "url id" pairs in it. For example:
+and inserting
+.B URL ID
+pairs in it. For example:
 
 .IP
-http://moinmoin.wikiwikiweb.de 987654321.321.54321 
+http://moinmo.in 987654321.321.54321
+.IP
 http://wiki.canonical.com
+.IP
 http://example.com/moin/moin.cgi 123456789.123.12345 
 
 .PP
@@ -83,7 +114,7 @@ This file should contain lines with pairs of "alias translation". For
 instance:
 
 .IP
-script http://moinmoin.wikiwikiweb.de/ScriptMarket
+script http://moinmo.in/ScriptMarket
 
 .PP
 With this line present, one may execute a command like follows:

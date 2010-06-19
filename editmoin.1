@@ -54,7 +54,7 @@ accessing, it must know your username.  For that, you must edit the file
 .B ~/.moin_users
 and insert
 .B URL ID
-pairs on it. For example:
+pairs in it. For example:
 
 .IP
 http://moinmo.in YourUserName
@@ -71,7 +71,7 @@ https://user:password@example.com/moin/moin.cgi YourUserName
 
 .PP
 For using shortcuts (see below), and also for better control, defining
-URLs without IDs in that file is valid.
+URLs without usernames in that file is valid.
 
 
 .SH SETTING YOUR MOIN ID EXPLICITLY
@@ -134,6 +134,8 @@ also processed for matching shortcuts as specified below.
 
 Instead of using the whole URL, you may use a shortcut, which consists
 of any substring of an URL contained in 
+.B ~/.moin_users
+and/or
 .B ~/.moin_ids\fR,
 followed by a slash and an optional subpath. For instance:
 

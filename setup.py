@@ -22,7 +22,7 @@ setup(name="editmoin",
       license = "GPL",
       long_description = 
 """\
-This program allows you to edit moin (see http://moinmoin.wikiwikiweb.de)
+This program allows you to edit moin (see http://moinmo.in)
 pages with your preferred editor. It means you can easily edit your
 pages, without the usual limitations of most web browsers' text areas.
 """,

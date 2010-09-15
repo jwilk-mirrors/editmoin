@@ -414,6 +414,28 @@ def get_session_cookie(user, url):
             return morsel.key, morsel.value
     raise Error("Couldn't obtain session cookie from server")
 
+def edit(url, template=None, editfile_func=editfile):
+    url = translate_shortcut(url)
+    user = get_user(url)
+    if user:
+        # Moin >= 1.7
+        cookiename, cookievalue = get_session_cookie(user, url)
+        urlopener = get_urlopener(url, cookievalue, cookiename)
+    else:
+        # Moin < 1.7
+        cookievalue = get_id(url)
+        urlopener = get_urlopener(url, cookievalue)
+
+    moinfile = fetchfile(urlopener, url, id, template)
+    try:
+        page_edited = editfile_func(moinfile)
+        if page_edited:
+            sendfile(urlopener, url, moinfile)
+        else:
+            sendcancel(urlopener, url, moinfile)
+    finally:
+        os.unlink(moinfile.filename)
+    return page_edited
 
 def main():
     argv = sys.argv[1:]
@@ -425,25 +447,7 @@ def main():
         sys.stderr.write(USAGE)
         sys.exit(1)
     try:
-        url = translate_shortcut(argv[0])
-        user = get_user(url)
-        if user:
-            # Moin >= 1.7
-            cookiename, cookievalue = get_session_cookie(user, url)
-            urlopener = get_urlopener(url, cookievalue, cookiename)
-        else:
-            # Moin < 1.7
-            cookievalue = get_id(url)
-            urlopener = get_urlopener(url, cookievalue)
-
-        moinfile = fetchfile(urlopener, url, id, template)
-        try:
-            if editfile(moinfile):
-                sendfile(urlopener, url, moinfile)
-            else:
-                sendcancel(urlopener, url, moinfile)
-        finally:
-            os.unlink(moinfile.filename)
+        edit(argv[0], template)
     except (IOError, OSError, Error), e:
         sys.stderr.write("error: %s\n" % str(e))
         sys.exit(1)

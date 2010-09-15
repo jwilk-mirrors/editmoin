@@ -19,7 +19,7 @@ Tested moin versions: 0.9, 0.11, 1.0, 1.1, 1.3.5, 1.5, 1.5.1, 1.5.3,
 """
 
 __author__ = "Gustavo Niemeyer <gustavo@niemeyer.net>"
-__version__ = "1.15"
+__version__ = "1.16"
 __license__ = "GPL"
 
 import tempfile

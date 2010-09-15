@@ -310,9 +310,9 @@ def get_urlopener(moinurl, cookievalue=None, cookiename="MOIN_SESSION"):
         urlopener.proxies.update({"http": proxy})
     if cookievalue:
         # moinmoin < 1.6
-        urlopener.addheader("Cookie", "MOIN_ID=\"%s\"" % cookievalue)
+        urlopener.addheader("Cookie", "MOIN_ID=%s" % cookievalue)
         # moinmoin >= 1.6
-        urlopener.addheader("Cookie", "%s=\"%s\"" % (cookiename, cookievalue))
+        urlopener.addheader("Cookie", "%s=%s" % (cookiename, cookievalue))
     return urlopener
 
 def fetchfile(urlopener, url, id, template):

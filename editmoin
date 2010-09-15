@@ -426,7 +426,7 @@ def edit(url, template=None, editfile_func=editfile):
         cookievalue = get_id(url)
         urlopener = get_urlopener(url, cookievalue)
 
-    moinfile = fetchfile(urlopener, url, id, template)
+    moinfile = fetchfile(urlopener, url, cookievalue, template)
     try:
         page_edited = editfile_func(moinfile)
         if page_edited:

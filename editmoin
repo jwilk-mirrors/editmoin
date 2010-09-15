@@ -115,15 +115,13 @@ class MoinFile:
         self.ticket = self._get_data(TICKETRE, "ticket", None)
         self.question = self._get_data(TEXTCHARE, "question", None)
         self.answer = ""
+        self.message = get_message(self.data)
 
     def _get_data(self, pattern, info, default=marker):
         match = pattern.search(self.data)
         if not match:
             if default is not marker:
                 return default
-            message = get_message(self.data)
-            if message:
-                print message
             raise Error, info+" information not found"
         else:
             return match.group(1)
@@ -325,6 +323,8 @@ def fetchfile(urlopener, url, id, template):
 
 def editfile(moinfile):
     edited = 0
+    if moinfile.message:
+        print moinfile.message
     if moinfile.question:
         moinfile.answer = raw_input(moinfile.question + " ")
     filename = moinfile.write_raw()

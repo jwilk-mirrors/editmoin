@@ -366,7 +366,7 @@ def editfile(moinfile):
     if moinfile.question:
         moinfile.answer = raw_input(moinfile.question + " ")
     filename = moinfile.write_raw()
-    editor = os.environ.get("EDITOR", "vi")
+    editor = os.environ.get("EDITOR", "sensible-editor")
     digest = md5(open(filename).read()).digest()
     subprocess.call("%s %s" % (editor, filename), shell=True)
     if digest != md5(open(filename).read()).digest():

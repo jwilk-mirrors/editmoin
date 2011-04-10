@@ -31,6 +31,8 @@ import re
 import subprocess
 import getpass
 import Cookie
+import urlparse
+import urllib
 try:
     from hashlib import md5
 except ImportError:
@@ -258,6 +260,42 @@ def get_id(moinurl):
 def get_user(moinurl):
     return get_token_with_url(USERSFILENAME, moinurl)
 
+def extract_args(moinurl):
+    """Given a URL with a query, strip those that conflict such
+    as 'action' and extract those that are equivalent to command line
+    arguments such as 'template'.
+
+    >>> extract_args('https://foo.org/Bar')
+    ('https://foo.org/Bar', None)
+
+    >>> extract_args('https://foo.org/Baz?action=edit')
+    ('https://foo.org/Baz', None)
+
+    >>> extract_args('https://foo.org/Dog?action=edit&template=Template')
+    ('https://foo.org/Dog', 'Template')
+    """
+    try:
+        parts = urlparse.urlparse(moinurl)
+        params = urlparse.parse_qs(parts.query)
+
+        # Pull out the template name
+        template = params.get('template', [None])[0]
+
+        # Delete all parameters that might interfere
+        for blacklist in 'action template'.split():
+            if blacklist in params:
+                del params[blacklist]
+
+        # Turn the parameters back into a query string
+        encoded = urllib.urlencode(params)
+
+        next = urlparse.urlunparse((parts.scheme, parts.netloc, parts.path, parts.params, encoded, parts.fragment))
+        
+        return next, template
+    except Exception, ex:
+        # Something went wrong.  Give up.
+        return moinurl, None
+
 def translate_shortcut(moinurl):
     if "://" in moinurl:
         return moinurl
@@ -415,6 +453,11 @@ def get_session_cookie(user, url):
     raise Error("Couldn't obtain session cookie from server")
 
 def edit(url, template=None, editfile_func=editfile):
+    url, url_template = extract_args(url)
+
+    if url_template and not template:
+        template = url_template
+
     url = translate_shortcut(url)
     user = get_user(url)
     if user:

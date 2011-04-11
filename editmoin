@@ -274,27 +274,22 @@ def extract_args(moinurl):
     >>> extract_args('https://foo.org/Dog?action=edit&template=Template')
     ('https://foo.org/Dog', 'Template')
     """
-    try:
-        parts = urlparse.urlparse(moinurl)
-        params = urlparse.parse_qs(parts.query)
+    parts = urlparse.urlparse(moinurl)
+    params = urlparse.parse_qs(parts.query)
 
-        # Pull out the template name
-        template = params.get('template', [None])[0]
+    # Pull out the template name
+    template = params.get('template', [None])[0]
 
-        # Delete all parameters that might interfere
-        for blacklist in 'action template'.split():
-            if blacklist in params:
-                del params[blacklist]
+    # Delete all parameters that might interfere
+    for item in "action template".split():
+        if item in params:
+            del params[item]
 
-        # Turn the parameters back into a query string
-        encoded = urllib.urlencode(params)
+    # Turn the parameters back into a query string
+    encoded = urllib.urlencode(params)
 
-        next = urlparse.urlunparse((parts.scheme, parts.netloc, parts.path, parts.params, encoded, parts.fragment))
-        
-        return next, template
-    except Exception, ex:
-        # Something went wrong.  Give up.
-        return moinurl, None
+    next = urlparse.urlunparse((parts.scheme, parts.netloc, parts.path, parts.params, encoded, parts.fragment))
+    return next, template
 
 def translate_shortcut(moinurl):
     if "://" in moinurl:
